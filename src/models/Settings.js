@@ -115,7 +115,8 @@ const settingsSchema = new mongoose.Schema({
       address: String,
       phone: String,
       email: String,
-      hours: String
+      hours: String,
+      mapLink: String
     }]
   },
 

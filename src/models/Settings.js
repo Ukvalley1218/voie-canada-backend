@@ -170,6 +170,20 @@ const settingsSchema = new mongoose.Schema({
     logo: String
   }],
 
+  // Process Steps (How It Works)
+  processSteps: [{
+    number: Number,
+    title: String,
+    description: String
+  }],
+
+  // FAQs
+  faqs: [{
+    question: String,
+    answer: String,
+    category: String
+  }],
+
   // CTA Section
   ctaSection: {
     headline: {

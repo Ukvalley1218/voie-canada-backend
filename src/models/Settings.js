@@ -21,6 +21,16 @@ const settingsSchema = new mongoose.Schema({
 
   // Hero Section
   hero: {
+    badge: {
+      text: {
+        type: String,
+        default: 'IMMIGRATION CANADA'
+      },
+      icon: {
+        type: String,
+        default: 'flag'
+      }
+    },
     headline: {
       type: String,
       default: 'Your Pathway to Canada'
@@ -36,6 +46,22 @@ const settingsSchema = new mongoose.Schema({
     backgroundImage: {
       type: String,
       default: ''
+    },
+    overlayOpacity: {
+      type: Number,
+      default: 0.7,
+      min: 0,
+      max: 1
+    },
+    overlayDirection: {
+      type: String,
+      enum: ['left', 'right', 'bottom', 'full'],
+      default: 'left'
+    },
+    textPosition: {
+      type: String,
+      enum: ['left', 'center', 'right'],
+      default: 'left'
     },
     primaryCTA: {
       text: {
@@ -56,7 +82,15 @@ const settingsSchema = new mongoose.Schema({
         type: String,
         default: '/education'
       }
-    }
+    },
+    showStats: {
+      type: Boolean,
+      default: true
+    },
+    stats: [{
+      value: String,
+      label: String
+    }]
   },
 
   // Trust Stats
@@ -225,6 +259,164 @@ const settingsSchema = new mongoose.Schema({
     copyrightText: {
       type: String,
       default: '© {year} Voie Canada. All rights reserved.'
+    }
+  },
+
+  // Homepage Sections (Dynamic Image + Content Sections)
+  homepageSections: [{
+    id: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      enum: ['image-content', 'content-image', 'stats', 'testimonials', 'cta'],
+      default: 'image-content'
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    subtitle: {
+      type: String,
+      default: ''
+    },
+    description: {
+      type: String,
+      default: ''
+    },
+    image: {
+      type: String,
+      default: ''
+    },
+    imageAlt: {
+      type: String,
+      default: ''
+    },
+    points: [{
+      title: String,
+      description: String,
+      icon: String
+    }],
+    cta: {
+      primary: {
+        text: String,
+        link: String
+      },
+      secondary: {
+        text: String,
+        link: String
+      }
+    },
+    backgroundColor: {
+      type: String,
+      enum: ['white', 'gray', 'blue', 'gradient'],
+      default: 'white'
+    },
+    order: {
+      type: Number,
+      default: 0
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+    }
+  }],
+
+  // Enhanced Stats Section
+  statsSection: {
+    title: {
+      type: String,
+      default: 'Trusted by Hundreds of Families'
+    },
+    subtitle: {
+      type: String,
+      default: 'Our track record speaks for itself'
+    },
+    stats: [{
+      number: {
+        type: String,
+        required: true
+      },
+      label: {
+        type: String,
+        required: true
+      },
+      icon: {
+        type: String,
+        default: ''
+      },
+      description: {
+        type: String,
+        default: ''
+      }
+    }],
+    backgroundColor: {
+      type: String,
+      enum: ['white', 'gray', 'gradient'],
+      default: 'gray'
+    }
+  },
+
+  // Testimonials Section Settings
+  testimonialsSection: {
+    title: {
+      type: String,
+      default: 'Success Stories'
+    },
+    subtitle: {
+      type: String,
+      default: 'Real Journeys. Real Success.'
+    },
+    description: {
+      type: String,
+      default: 'From visa approvals to inclusive education placements, we make every journey possible.'
+    },
+    backgroundColor: {
+      type: String,
+      enum: ['white', 'gray'],
+      default: 'gray'
+    }
+  },
+
+  // CTA Banner
+  ctaBanner: {
+    headline: {
+      type: String,
+      default: 'Start Your Canadian Journey Today'
+    },
+    description: {
+      type: String,
+      default: 'Take the first step towards your Canadian dream.'
+    },
+    backgroundImage: {
+      type: String,
+      default: ''
+    },
+    backgroundColor: {
+      type: String,
+      enum: ['blue', 'gradient', 'image'],
+      default: 'blue'
+    },
+    primaryButton: {
+      text: {
+        type: String,
+        default: 'Free Assessment'
+      },
+      link: {
+        type: String,
+        default: '/assessment'
+      }
+    },
+    secondaryButton: {
+      text: {
+        type: String,
+        default: 'Book Consultation'
+      },
+      link: {
+        type: String,
+        default: '/contact'
+      }
     }
   }
 }, {

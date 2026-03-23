@@ -123,6 +123,10 @@ const settingsSchema = new mongoose.Schema({
       type: String,
       default: 'At Voie Canada, we specialize in inclusive education pathways and tailored entrepreneur immigration programs.'
     },
+    image: {
+      type: String,
+      default: ''
+    },
     points: [{
       title: String,
       description: String

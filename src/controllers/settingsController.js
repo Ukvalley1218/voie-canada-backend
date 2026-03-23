@@ -44,7 +44,14 @@ export const getPublicSettings = async (req, res) => {
       certifications: settings.certifications,
       ctaSection: settings.ctaSection,
       footer: settings.footer,
-      seoDefaults: settings.seoDefaults
+      seoDefaults: settings.seoDefaults,
+      // Added missing fields for frontend
+      processSteps: settings.processSteps,
+      faqs: settings.faqs,
+      homepageSections: settings.homepageSections,
+      statsSection: settings.statsSection,
+      testimonialsSection: settings.testimonialsSection,
+      ctaBanner: settings.ctaBanner
     };
 
     res.json({

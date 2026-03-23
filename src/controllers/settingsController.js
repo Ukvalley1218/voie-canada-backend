@@ -51,7 +51,8 @@ export const getPublicSettings = async (req, res) => {
       homepageSections: settings.homepageSections,
       statsSection: settings.statsSection,
       testimonialsSection: settings.testimonialsSection,
-      ctaBanner: settings.ctaBanner
+      ctaBanner: settings.ctaBanner,
+      aboutPage: settings.aboutPage
     };
 
     res.json({

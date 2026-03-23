@@ -10,6 +10,7 @@ import testimonialRoutes from './routes/testimonial.js';
 import resourceRoutes from './routes/resource.js';
 import settingsRoutes from './routes/settings.js';
 import authRoutes from './routes/auth.js';
+import teamRoutes from './routes/team.js';
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/team', teamRoutes);
 
 // Auth Routes
 

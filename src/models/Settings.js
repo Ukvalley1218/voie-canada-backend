@@ -266,6 +266,63 @@ const settingsSchema = new mongoose.Schema({
     }
   },
 
+  // About Page Settings
+  aboutPage: {
+    heroTitle: {
+      type: String,
+      default: 'Who We Are'
+    },
+    heroSubtitle: {
+      type: String,
+      default: 'Voie Canada is a trusted immigration and education consultancy dedicated to helping professionals, entrepreneurs, and students achieve success in Canada.'
+    },
+    storyTitle: {
+      type: String,
+      default: 'Our Story'
+    },
+    storyHeadline: {
+      type: String,
+      default: 'Building Bridges to Canadian Dreams'
+    },
+    storyDescription: {
+      type: String,
+      default: 'Founded with a vision to make Canadian immigration and education accessible to everyone, Voie Canada has grown from a small consultancy to a trusted partner for hundreds of families and students. Our journey began when we recognized the unique challenges faced by individuals with diverse backgrounds and learning needs.'
+    },
+    storyImage: {
+      type: String,
+      default: ''
+    },
+    mission: {
+      title: {
+        type: String,
+        default: 'Our Mission'
+      },
+      description: {
+        type: String,
+        default: 'To provide personalized, transparent, and inclusive pathways for immigration and education, ensuring every client receives expert guidance tailored to their unique circumstances and goals.'
+      }
+    },
+    vision: {
+      title: {
+        type: String,
+        default: 'Our Vision'
+      },
+      description: {
+        type: String,
+        default: 'To be the most trusted partner for families and professionals seeking opportunities in Canada, known for our expertise, integrity, and commitment to inclusive education and immigration services.'
+      }
+    },
+    values: [{
+      title: String,
+      description: String,
+      icon: String
+    }],
+    showTeam: {
+      type: Boolean,
+      default: true
+    }
+  },
+
   // Homepage Sections (Dynamic Image + Content Sections)
   homepageSections: [{
     id: {

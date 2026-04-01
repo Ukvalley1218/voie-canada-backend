@@ -6,10 +6,11 @@ import {
   updateBlog,
   deleteBlog
 } from '../controllers/blogController.js';
+import { optionalAuth } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.get('/', getBlogs);
+router.get('/', optionalAuth, getBlogs);
 router.get('/:slug', getBlogBySlug);
 router.post('/', createBlog);
 router.put('/:id', updateBlog);

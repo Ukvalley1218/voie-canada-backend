@@ -209,3 +209,85 @@ export const updateCTA = async (req, res) => {
     });
   }
 };
+
+// @route   GET /api/settings/legal/privacy-policy
+// @desc    Get privacy policy
+// @access  Public
+export const getPrivacyPolicy = async (req, res) => {
+  try {
+    const settings = await Settings.getSettings();
+
+    res.json({
+      success: true,
+      data: settings.privacyPolicy || {}
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @route   PUT /api/settings/legal/privacy-policy
+// @desc    Update privacy policy
+// @access  Private (admin only)
+export const updatePrivacyPolicy = async (req, res) => {
+  try {
+    const settings = await Settings.getSettings();
+    settings.privacyPolicy = { ...settings.privacyPolicy, ...req.body };
+    await settings.save();
+
+    res.json({
+      success: true,
+      message: 'Privacy policy updated successfully',
+      data: settings.privacyPolicy
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @route   GET /api/settings/legal/terms-of-service
+// @desc    Get terms of service
+// @access  Public
+export const getTermsOfService = async (req, res) => {
+  try {
+    const settings = await Settings.getSettings();
+
+    res.json({
+      success: true,
+      data: settings.termsOfService || {}
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @route   PUT /api/settings/legal/terms-of-service
+// @desc    Update terms of service
+// @access  Private (admin only)
+export const updateTermsOfService = async (req, res) => {
+  try {
+    const settings = await Settings.getSettings();
+    settings.termsOfService = { ...settings.termsOfService, ...req.body };
+    await settings.save();
+
+    res.json({
+      success: true,
+      message: 'Terms of service updated successfully',
+      data: settings.termsOfService
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

@@ -1,6 +1,6 @@
 import express from 'express';
-import { uploadImage as uploadMiddleware } from '../middlewares/upload.js';
-import { uploadImage } from '../utils/upload.js';
+import { uploadImage as uploadMiddleware, uploadDocument as uploadDocumentMiddleware, uploadVideo as uploadVideoMiddleware } from '../middlewares/upload.js';
+import { uploadImage, uploadDocument, uploadVideo } from '../utils/upload.js';
 
 const router = express.Router();
 
@@ -34,6 +34,103 @@ router.post('/image', uploadMiddleware.single('image'), async (req, res) => {
       public_id: result.public_id
     });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// @route   POST /api/upload/document
+// @desc    Upload document (PDF, DOC, etc.) to Cloudinary
+// @access  Public (will be protected for admin later)
+router.post('/document', uploadDocumentMiddleware.single('document'), async (req, res) => {
+  try {
+    if (!req.file) {
+      console.error('No file received in request');
+      return res.status(400).json({
+        success: false,
+        message: 'No document file provided'
+      });
+    }
+
+    console.log('File received:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
+
+    // Convert buffer to base64
+    const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
+    const result = await uploadDocument(fileStr, 'voie-canada/documents');
+
+    if (!result.success) {
+      console.error('Cloudinary upload failed:', result.error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload document: ' + result.error
+      });
+    }
+
+    console.log('Upload successful:', result.url);
+
+    res.json({
+      success: true,
+      url: result.url,
+      public_id: result.public_id,
+      original_filename: req.file.originalname
+    });
+  } catch (error) {
+    console.error('Document upload error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// @route   POST /api/upload/video
+// @desc    Upload video to Cloudinary
+// @access  Public (will be protected for admin later)
+router.post('/video', uploadVideoMiddleware.single('video'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No video file provided'
+      });
+    }
+
+    console.log('Video received:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
+
+    // Convert buffer to base64
+    const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
+    const result = await uploadVideo(fileStr, 'voie-canada/videos');
+
+    if (!result.success) {
+      console.error('Cloudinary video upload failed:', result.error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload video: ' + result.error
+      });
+    }
+
+    console.log('Video upload successful:', result.url);
+
+    res.json({
+      success: true,
+      url: result.url,
+      public_id: result.public_id,
+      original_filename: req.file.originalname
+    });
+  } catch (error) {
+    console.error('Video upload error:', error);
     res.status(500).json({
       success: false,
       message: error.message

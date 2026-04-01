@@ -25,8 +25,9 @@ const blogSchema = new mongoose.Schema({
     type: String
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'BlogCategory'
+    type: String,
+    enum: ['Immigration', 'Education', 'Settlement', 'General'],
+    default: 'General'
   },
   tags: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -59,14 +60,14 @@ const blogSchema = new mongoose.Schema({
 });
 
 // Create slug from title before saving
-blogSchema.pre('save', function(next) {
+blogSchema.pre('save', function (next) {
   if (this.isModified('title')) {
     this.slug = this.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
   }
-  next();
+  // next();
 });
 
 export default mongoose.model('Blog', blogSchema);

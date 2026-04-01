@@ -479,6 +479,37 @@ const settingsSchema = new mongoose.Schema({
         default: '/contact'
       }
     }
+  },
+
+  // Legal Pages
+  privacyPolicy: {
+    title: {
+      type: String,
+      default: 'Privacy Policy'
+    },
+    lastUpdated: {
+      type: Date,
+      default: Date.now
+    },
+    sections: [{
+      title: String,
+      content: String
+    }]
+  },
+
+  termsOfService: {
+    title: {
+      type: String,
+      default: 'Terms of Service'
+    },
+    lastUpdated: {
+      type: Date,
+      default: Date.now
+    },
+    sections: [{
+      title: String,
+      content: String
+    }]
   }
 }, {
   timestamps: true

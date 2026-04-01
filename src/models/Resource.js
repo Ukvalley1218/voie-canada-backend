@@ -8,7 +8,7 @@ const resourceSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
-    required: true,
+    // required: true,
     unique: true,
     lowercase: true
   },
@@ -79,14 +79,14 @@ const resourceSchema = new mongoose.Schema({
 });
 
 // Create slug from title before saving
-resourceSchema.pre('save', function(next) {
+resourceSchema.pre('save', function (next) {
   if (this.isModified('title')) {
     this.slug = this.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
   }
-  next();
+
 });
 
 export default mongoose.model('Resource', resourceSchema);

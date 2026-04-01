@@ -57,3 +57,47 @@ export const uploadMultipleImages = async (files, folder = 'voie-canada') => {
     };
   }
 };
+
+// Upload document (PDF, DOC, etc.) to Cloudinary
+export const uploadDocument = async (file, folder = 'voie-canada/documents') => {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      folder: folder,
+      resource_type: 'raw', // Use 'raw' for non-image files like PDFs
+      type: 'upload'
+    });
+
+    return {
+      success: true,
+      url: result.secure_url,
+      public_id: result.public_id
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
+
+// Upload video to Cloudinary
+export const uploadVideo = async (file, folder = 'voie-canada/videos') => {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      folder: folder,
+      resource_type: 'video', // Use 'video' for video files
+      type: 'upload'
+    });
+
+    return {
+      success: true,
+      url: result.secure_url,
+      public_id: result.public_id
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};

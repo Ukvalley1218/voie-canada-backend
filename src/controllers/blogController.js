@@ -1,19 +1,25 @@
 import Blog from '../models/Blog.js';
 
 // @route   GET /api/blog
-// @desc    Get all published blog posts
+// @desc    Get all published blog posts (or all posts for admin)
 // @access  Public
 export const getBlogs = async (req, res) => {
   try {
-    const { category, tag, page = 1, limit = 10 } = req.query;
+    const { category, tag, status, page = 1, limit = 10 } = req.query;
 
-    const query = { isPublished: true };
+    // Check if admin user is requesting (authenticated requests can see all posts)
+    const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'editor');
+
+    const query = isAdmin ? {} : { isPublished: true };
     if (category) query.category = category;
     if (tag) query.tags = { $in: [tag] };
+    if (status === 'published') query.isPublished = true;
+    if (status === 'draft') query.isPublished = false;
 
     const blogs = await Blog.find(query)
-      .populate('category author', 'name title')
-      .sort({ publishedAt: -1 })
+      .populate('tags', 'name slug')
+      .populate('author', 'name title')
+      .sort({ publishedAt: -1, createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
 
@@ -45,7 +51,7 @@ export const getBlogBySlug = async (req, res) => {
     const blog = await Blog.findOne({
       slug: req.params.slug,
       isPublished: true
-    }).populate('category author tags');
+    }).populate('author tags');
 
     if (!blog) {
       return res.status(404).json({

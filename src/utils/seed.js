@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 import Settings from '../models/Settings.js';
+import BlogCategory from '../models/BlogCategory.js';
+import BlogTag from '../models/BlogTag.js';
 
 // Create initial admin user
 export const createAdminUser = async () => {
@@ -130,10 +132,66 @@ export const createDefaultSettings = async () => {
   }
 };
 
+// Create default blog categories
+export const createDefaultCategories = async () => {
+  try {
+    const existingCategories = await BlogCategory.find();
+
+    if (existingCategories.length > 0) {
+      console.log('Blog categories already exist');
+      return;
+    }
+
+    const categories = await BlogCategory.insertMany([
+      { name: 'Immigration', description: 'Immigration news, tips, and guides', order: 1 },
+      { name: 'Education', description: 'Education news, tips, and guides', order: 2 },
+      { name: 'Settlement', description: 'Settling in Canada guides and tips', order: 3 },
+      { name: 'General', description: 'General updates and announcements', order: 4 }
+    ]);
+
+    console.log('Default blog categories created successfully');
+    return categories;
+  } catch (error) {
+    console.error('Error creating default categories:', error);
+  }
+};
+
+// Create default blog tags
+export const createDefaultTags = async () => {
+  try {
+    const existingTags = await BlogTag.find();
+
+    if (existingTags.length > 0) {
+      console.log('Blog tags already exist');
+      return;
+    }
+
+    const tags = await BlogTag.insertMany([
+      { name: 'Express Entry', description: 'Express Entry immigration program' },
+      { name: 'Provincial Nominee', description: 'Provincial Nominee Program (PNP)' },
+      { name: 'Study Permit', description: 'Canadian study permits' },
+      { name: 'Work Permit', description: 'Canadian work permits' },
+      { name: 'PR Card', description: 'Permanent Resident Card' },
+      { name: 'Citizenship', description: 'Canadian citizenship' },
+      { name: 'Visa', description: 'Visa information' },
+      { name: 'Career', description: 'Career tips and job search' },
+      { name: 'Life in Canada', description: 'Life in Canada tips' },
+      { name: 'News', description: 'Latest news and updates' }
+    ]);
+
+    console.log('Default blog tags created successfully');
+    return tags;
+  } catch (error) {
+    console.error('Error creating default tags:', error);
+  }
+};
+
 // Run all seed functions
 export const runSeed = async () => {
   console.log('Running seed...');
   await createAdminUser();
   await createDefaultSettings();
+  await createDefaultCategories();
+  await createDefaultTags();
   console.log('Seed completed');
 };

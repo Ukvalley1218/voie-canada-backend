@@ -7,7 +7,12 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
-  "keywords": ["immigration", "education", "canada", "consultancy"],
+  "keywords": [
+    "immigration",
+    "education",
+    "canada",
+    "consultancy"
+  ],
   "author": "Voie Canada",
   "license": "ISC",
   "description": "Backend API for Voie Canada Immigration and Education Consultancy",

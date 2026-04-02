@@ -1,13 +1,15 @@
 import Service from '../models/Service.js';
 
 // @route   GET /api/services
-// @desc    Get all active services
+// @desc    Get all active services (public) or all services (admin)
 // @access  Public
 export const getServices = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category, all } = req.query;
 
-    const query = { isActive: true };
+    // Build query - if 'all' param is true, get all services (for admin)
+    // Otherwise, only get active services (for public)
+    const query = all === 'true' ? {} : { isActive: true };
     if (category) query.category = category;
 
     const services = await Service.find(query)
@@ -55,7 +57,7 @@ export const getServiceBySlug = async (req, res) => {
 };
 
 // @route   POST /api/services
-// @desc    Create new service (for admin later)
+// @desc    Create new service
 // @access  Public (will be protected)
 export const createService = async (req, res) => {
   try {
@@ -76,7 +78,7 @@ export const createService = async (req, res) => {
 };
 
 // @route   PUT /api/services/:id
-// @desc    Update service (for admin later)
+// @desc    Update service
 // @access  Public (will be protected)
 export const updateService = async (req, res) => {
   try {
@@ -105,8 +107,39 @@ export const updateService = async (req, res) => {
   }
 };
 
+// @route   PATCH /api/services/:id/toggle-status
+// @desc    Toggle service active status (activate/deactivate)
+// @access  Public (will be protected)
+export const toggleServiceStatus = async (req, res) => {
+  try {
+    const service = await Service.findById(req.params.id);
+
+    if (!service) {
+      return res.status(404).json({
+        success: false,
+        message: 'Service not found'
+      });
+    }
+
+    // Toggle the isActive status
+    service.isActive = !service.isActive;
+    await service.save();
+
+    res.json({
+      success: true,
+      data: service,
+      message: `Service ${service.isActive ? 'activated' : 'deactivated'} successfully`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // @route   DELETE /api/services/:id
-// @desc    Delete service (for admin later)
+// @desc    Delete service
 // @access  Public (will be protected)
 export const deleteService = async (req, res) => {
   try {

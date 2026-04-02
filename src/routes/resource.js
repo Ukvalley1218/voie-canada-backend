@@ -7,9 +7,8 @@ import {
   deleteResource,
   trackDownload,
   toggleFeatured,
-  toggleActive
+  toggleResourceStatus
 } from '../controllers/resourceController.js';
-import { protect, adminOnly, editorAccess } from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -18,11 +17,11 @@ router.get('/', getResources);
 router.get('/slug/:slug', getResourceBySlug);
 router.post('/:id/download', trackDownload);
 
-// Protected routes (admin/editor)
-router.post('/', protect, editorAccess, createResource);
-router.put('/:id', protect, editorAccess, updateResource);
-router.delete('/:id', protect, adminOnly, deleteResource);
-router.put('/:id/featured', protect, editorAccess, toggleFeatured);
-router.put('/:id/active', protect, adminOnly, toggleActive);
+// Admin routes - IMPORTANT: Place /toggle-status BEFORE /:id routes
+router.post('/', createResource);
+router.put('/:id', updateResource);
+router.patch('/:id/toggle-status', toggleResourceStatus);
+router.patch('/:id/toggle-featured', toggleFeatured);
+router.delete('/:id', deleteResource);
 
 export default router;

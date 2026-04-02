@@ -4,14 +4,17 @@ import {
   getServiceBySlug,
   createService,
   updateService,
-  deleteService
+  deleteService,
+  toggleServiceStatus
 } from '../controllers/serviceController.js';
 
 const router = express.Router();
 
+// IMPORTANT: Place /toggle-status BEFORE /:slug routes
 router.get('/', getServices);
-router.get('/:slug', getServiceBySlug);
 router.post('/', createService);
+router.patch('/:id/toggle-status', toggleServiceStatus);
+router.get('/:slug', getServiceBySlug);
 router.put('/:id', updateService);
 router.delete('/:id', deleteService);
 

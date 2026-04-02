@@ -1,11 +1,17 @@
 import TeamMember from '../models/TeamMember.js';
 
 // @route   GET /api/team
-// @desc    Get all active team members
+// @desc    Get all active team members (public) or all team members (admin)
 // @access  Public
 export const getTeamMembers = async (req, res) => {
   try {
-    const teamMembers = await TeamMember.find({ isActive: true })
+    const { all } = req.query;
+
+    // Build query - if 'all' param is true, get all team members (for admin)
+    // Otherwise, only get active team members (for public)
+    const query = all === 'true' ? {} : { isActive: true };
+
+    const teamMembers = await TeamMember.find(query)
       .sort({ order: 1, createdAt: 1 });
 
     res.json({

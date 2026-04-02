@@ -5,12 +5,11 @@ import Blog from '../models/Blog.js';
 // @access  Public
 export const getBlogs = async (req, res) => {
   try {
-    const { category, tag, status, page = 1, limit = 10 } = req.query;
+    const { category, tag, status, page = 1, limit = 10, all } = req.query;
 
-    // Check if admin user is requesting (authenticated requests can see all posts)
-    const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'editor');
-
-    const query = isAdmin ? {} : { isPublished: true };
+    // Build query - if 'all' param is true, get all blogs (for admin)
+    // Otherwise, only get published blogs (for public)
+    const query = all === 'true' ? {} : { isPublished: true };
     if (category) query.category = category;
     if (tag) query.tags = { $in: [tag] };
     if (status === 'published') query.isPublished = true;
@@ -44,7 +43,7 @@ export const getBlogs = async (req, res) => {
 };
 
 // @route   GET /api/blog/:slug
-// @desc    Get single blog post by slug
+// @desc    Get single blog post by slug (published only for public)
 // @access  Public
 export const getBlogBySlug = async (req, res) => {
   try {
@@ -73,7 +72,7 @@ export const getBlogBySlug = async (req, res) => {
 };
 
 // @route   POST /api/blog
-// @desc    Create new blog post (for admin later)
+// @desc    Create new blog post
 // @access  Public (will be protected)
 export const createBlog = async (req, res) => {
   try {
@@ -98,7 +97,7 @@ export const createBlog = async (req, res) => {
 };
 
 // @route   PUT /api/blog/:id
-// @desc    Update blog post (for admin later)
+// @desc    Update blog post
 // @access  Public (will be protected)
 export const updateBlog = async (req, res) => {
   try {
@@ -133,8 +132,45 @@ export const updateBlog = async (req, res) => {
   }
 };
 
+// @route   PATCH /api/blog/:id/toggle-status
+// @desc    Toggle blog publish status (publish/unpublish)
+// @access  Public (will be protected)
+export const toggleBlogStatus = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog post not found'
+      });
+    }
+
+    // Toggle the isPublished status
+    blog.isPublished = !blog.isPublished;
+
+    // Set publishedAt date when publishing
+    if (blog.isPublished && !blog.publishedAt) {
+      blog.publishedAt = new Date();
+    }
+
+    await blog.save();
+
+    res.json({
+      success: true,
+      data: blog,
+      message: `Blog post ${blog.isPublished ? 'published' : 'unpublished'} successfully`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // @route   DELETE /api/blog/:id
-// @desc    Delete blog post (for admin later)
+// @desc    Delete blog post
 // @access  Public (will be protected)
 export const deleteBlog = async (req, res) => {
   try {

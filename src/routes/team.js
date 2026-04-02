@@ -13,12 +13,12 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getTeamMembers);
-router.get('/:id', getTeamMemberById);
 
-// Protected routes (admin only)
+// Protected routes (admin only) - IMPORTANT: Place /toggle-status BEFORE /:id routes
 router.post('/', protect, adminOnly, createTeamMember);
+router.patch('/:id/toggle-status', protect, adminOnly, toggleActive);
+router.get('/:id', getTeamMemberById);
 router.put('/:id', protect, adminOnly, updateTeamMember);
 router.delete('/:id', protect, adminOnly, deleteTeamMember);
-router.put('/:id/toggle-active', protect, adminOnly, toggleActive);
 
 export default router;

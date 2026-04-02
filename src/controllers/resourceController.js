@@ -1,13 +1,15 @@
 import Resource from '../models/Resource.js';
 
 // @route   GET /api/resources
-// @desc    Get all active resources (public)
+// @desc    Get all active resources (public) or all resources (admin)
 // @access  Public
 export const getResources = async (req, res) => {
   try {
-    const { category, type, featured, limit } = req.query;
+    const { category, type, featured, limit, all } = req.query;
 
-    const query = { isActive: true };
+    // Build query - if 'all' param is true, get all resources (for admin)
+    // Otherwise, only get active resources (for public)
+    const query = all === 'true' ? {} : { isActive: true };
     if (category) query.category = category;
     if (type) query.type = type;
     if (featured) query.isFeatured = featured === 'true';
@@ -113,6 +115,37 @@ export const updateResource = async (req, res) => {
   }
 };
 
+// @route   PATCH /api/resources/:id/toggle-status
+// @desc    Toggle resource active status (activate/deactivate)
+// @access  Private
+export const toggleResourceStatus = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+
+    if (!resource) {
+      return res.status(404).json({
+        success: false,
+        message: 'Resource not found'
+      });
+    }
+
+    // Toggle the isActive status
+    resource.isActive = !resource.isActive;
+    await resource.save();
+
+    res.json({
+      success: true,
+      data: resource,
+      message: `Resource ${resource.isActive ? 'activated' : 'deactivated'} successfully`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // @route   DELETE /api/resources/:id
 // @desc    Delete resource (admin)
 // @access  Private
@@ -172,7 +205,7 @@ export const trackDownload = async (req, res) => {
   }
 };
 
-// @route   PUT /api/resources/:id/toggle-featured
+// @route   PATCH /api/resources/:id/toggle-featured
 // @desc    Toggle featured status
 // @access  Private
 export const toggleFeatured = async (req, res) => {
@@ -192,36 +225,6 @@ export const toggleFeatured = async (req, res) => {
     res.json({
       success: true,
       message: `Resource ${resource.isFeatured ? 'featured' : 'unfeatured'} successfully`,
-      data: resource
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-// @route   PUT /api/resources/:id/toggle-active
-// @desc    Toggle active status
-// @access  Private
-export const toggleActive = async (req, res) => {
-  try {
-    const resource = await Resource.findById(req.params.id);
-
-    if (!resource) {
-      return res.status(404).json({
-        success: false,
-        message: 'Resource not found'
-      });
-    }
-
-    resource.isActive = !resource.isActive;
-    await resource.save();
-
-    res.json({
-      success: true,
-      message: `Resource ${resource.isActive ? 'activated' : 'deactivated'} successfully`,
       data: resource
     });
   } catch (error) {

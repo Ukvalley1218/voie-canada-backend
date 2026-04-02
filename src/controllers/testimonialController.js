@@ -1,13 +1,15 @@
 import Testimonial from '../models/Testimonial.js';
 
 // @route   GET /api/testimonials
-// @desc    Get all active testimonials
+// @desc    Get testimonials (public gets active only, admin gets all)
 // @access  Public
 export const getTestimonials = async (req, res) => {
   try {
-    const { category, featured, limit } = req.query;
+    const { category, featured, limit, all } = req.query;
 
-    const query = { isActive: true };
+    // Build query - if 'all' param is true, get all testimonials (for admin)
+    // Otherwise, only get active testimonials (for public)
+    const query = all === 'true' ? {} : { isActive: true };
     if (category) query.category = category;
     if (featured) query.isFeatured = featured === 'true';
 
@@ -99,6 +101,37 @@ export const updateTestimonial = async (req, res) => {
     res.json({
       success: true,
       data: testimonial
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @route   PATCH /api/testimonials/:id/toggle-status
+// @desc    Toggle testimonial active status (activate/deactivate)
+// @access  Public (will be protected)
+export const toggleTestimonialStatus = async (req, res) => {
+  try {
+    const testimonial = await Testimonial.findById(req.params.id);
+
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: 'Testimonial not found'
+      });
+    }
+
+    // Toggle the isActive status
+    testimonial.isActive = !testimonial.isActive;
+    await testimonial.save();
+
+    res.json({
+      success: true,
+      data: testimonial,
+      message: `Testimonial ${testimonial.isActive ? 'activated' : 'deactivated'} successfully`
     });
   } catch (error) {
     res.status(500).json({
